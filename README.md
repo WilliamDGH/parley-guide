@@ -2,6 +2,10 @@
 
 A readable guide to the code of [Parley](https://github.com/linebender/parley), the Linebender rich text layout library: crates, pipeline, data structures, algorithms, invariants and conventions, with real numbers from small probe programs.
 
+**Read it online: <https://williamdgh.github.io/parley-guide/>**
+
+The site is rebuilt by GitHub Actions on every push to `main`.
+
 Read it locally:
 
 ```bash
