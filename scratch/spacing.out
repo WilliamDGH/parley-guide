@@ -1,0 +1,100 @@
+== Reference advances (Roboto 16px) ==
+  "a": full_width 8.70
+  "b": full_width 8.98
+  " ": full_width 3.96
+  "ab": full_width 17.68
+  "a b": full_width 21.64
+  "cd": full_width 17.40
+
+== Hanging whitespace: "ab   cd" at width 30 ==
+ Collapse: content widths min 17.68 max 46.96; layout width 17.68 full_width 29.56 lines 2
+  line "ab   " break Regular advance 29.56 hanging 11.88 offset 0.00 inline_max 30.00
+    run advance 29.56: a=8.70 b=8.98 space=3.96 space=3.96 space=3.96
+  line "cd" break None advance 17.40 hanging 0.00 offset 0.00 inline_max 30.00
+    run advance 17.40: c=8.38 d=9.02
+ Preserve: content widths min 17.68 max 46.96; layout width 17.68 full_width 29.56 lines 2
+  line "ab   " break Regular advance 29.56 hanging 11.88 offset 0.00 inline_max 30.00
+    run advance 29.56: a=8.70 b=8.98 space=3.96 space=3.96 space=3.96
+  line "cd" break None advance 17.40 hanging 0.00 offset 0.00 inline_max 30.00
+    run advance 17.40: c=8.38 d=9.02
+ BreakSpaces: content widths min 21.64 max 46.96; layout width 29.56 full_width 29.56 lines 2
+  line "ab   " break Regular advance 29.56 hanging 0.00 offset 0.00 inline_max 30.00
+    run advance 29.56: a=8.70 b=8.98 space=3.96 space=3.96 space=3.96
+  line "cd" break None advance 17.40 hanging 0.00 offset 0.00 inline_max 30.00
+    run advance 17.40: c=8.38 d=9.02
+
+== Conditional hanging: "ab   \ncd" (Preserve), widths 60, 24, 20 ==
+ width 60: layout width 29.56 full_width 29.56
+  line "ab   \n" break Explicit advance 29.56 hanging 0.00 offset 0.00 inline_max 60.00
+    run advance 29.56: a=8.70 b=8.98 space=3.96 space=3.96 space=3.96 \n=0.00
+  line "cd" break None advance 17.40 hanging 0.00 offset 0.00 inline_max 60.00
+    run advance 17.40: c=8.38 d=9.02
+ width 24: layout width 24.00 full_width 29.56
+  line "ab   \n" break Explicit advance 29.56 hanging 5.56 offset 0.00 inline_max 24.00
+    run advance 29.56: a=8.70 b=8.98 space=3.96 space=3.96 space=3.96 \n=0.00
+  line "cd" break None advance 17.40 hanging 0.00 offset 0.00 inline_max 24.00
+    run advance 17.40: c=8.38 d=9.02
+ width 20: layout width 20.00 full_width 29.56
+  line "ab   \n" break Explicit advance 29.56 hanging 9.56 offset 0.00 inline_max 20.00
+    run advance 29.56: a=8.70 b=8.98 space=3.96 space=3.96 space=3.96 \n=0.00
+  line "cd" break None advance 17.40 hanging 0.00 offset 0.00 inline_max 20.00
+    run advance 17.40: c=8.38 d=9.02
+
+== Justify: "aa bb cc dd ee" at width 60 ==
+ Start:
+  line "aa bb " break Regular advance 43.28 hanging 3.96 offset 0.00 inline_max 60.00
+    run advance 43.28: a=8.70 a=8.70 space=3.96 b=8.98 b=8.98 space=3.96
+  line "cc dd ee" break None advance 59.67 hanging 0.00 offset 0.00 inline_max 60.00
+    run advance 59.67: c=8.38 c=8.38 space=3.96 d=9.02 d=9.02 space=3.96 e=8.48 e=8.48
+ Justify:
+  line "aa bb " break Regular advance 43.28 hanging 3.96 offset 0.00 inline_max 60.00
+    run advance 63.96: a=8.70 a=8.70 space=24.64 b=8.98 b=8.98 space=3.96
+  line "cc dd ee" break None advance 59.67 hanging 0.00 offset 0.00 inline_max 60.00
+    run advance 59.67: c=8.38 c=8.38 space=3.96 d=9.02 d=9.02 space=3.96 e=8.48 e=8.48
+ End:
+  line "aa bb " break Regular advance 43.28 hanging 3.96 offset 20.68 inline_max 60.00
+    run advance 43.28: a=8.70 a=8.70 space=3.96 b=8.98 b=8.98 space=3.96
+  line "cc dd ee" break None advance 59.67 hanging 0.00 offset 0.33 inline_max 60.00
+    run advance 59.67: c=8.38 c=8.38 space=3.96 d=9.02 d=9.02 space=3.96 e=8.48 e=8.48
+
+== Letter spacing 2px and word spacing 5px: "ab cd" ==
+ letter 0 word 0: width 39.04
+  line "ab cd" break None advance 39.04 hanging 0.00 offset 0.00 inline_max 39.04
+    run advance 39.04: a=8.70 b=8.98 space=3.96 c=8.38 d=9.02
+ letter 2 word 0: width 49.04
+  line "ab cd" break None advance 49.04 hanging 0.00 offset 0.00 inline_max 49.04
+    run advance 49.04: a=10.70 b=10.98 space=5.96 c=10.38 d=11.02
+ letter 0 word 5: width 44.04
+  line "ab cd" break None advance 44.04 hanging 0.00 offset 0.00 inline_max 44.04
+    run advance 44.04: a=8.70 b=8.98 space=8.96 c=8.38 d=9.02
+ letter 2 word 5: width 54.04
+  line "ab cd" break None advance 54.04 hanging 0.00 offset 0.00 inline_max 54.04
+    run advance 54.04: a=10.70 b=10.98 space=10.96 c=10.38 d=11.02
+
+== Ligature with letter spacing: "office" ==
+ letter 0: width 39.63
+    "o" advance 9.12 lig_start false lig_cont false glyphs [83]
+    "f" advance 4.55 lig_start true lig_cont false glyphs [446]
+    "f" advance 4.55 lig_start false lig_cont true glyphs []
+    "i" advance 4.55 lig_start false lig_cont true glyphs []
+    "c" advance 8.38 lig_start false lig_cont false glyphs [71]
+    "e" advance 8.48 lig_start false lig_cont false glyphs [73]
+ letter 1: width 46.97
+    "o" advance 10.12 lig_start false lig_cont false glyphs [83]
+    "f" advance 6.55 lig_start false lig_cont false glyphs [74]
+    "f" advance 6.55 lig_start false lig_cont false glyphs [74]
+    "i" advance 4.88 lig_start false lig_cont false glyphs [77]
+    "c" advance 9.38 lig_start false lig_cont false glyphs [71]
+    "e" advance 9.48 lig_start false lig_cont false glyphs [73]
+
+== Vertical align: "x" + super "2" + "y" ==
+  line baseline 15 line_height 19 block 0..19 content 0..19
+    glyph run style 0 size 16 offset 0.00 baseline 15.00
+    glyph run style 1 size 10 offset 7.93 baseline 10.00
+    glyph run style 0 size 16 offset 13.54 baseline 15.00
+  root span metrics: Some(SpanMetrics { ascent: 15.0, descent: 4.0, x_height: 8.0 })
+
+== Line height: default (MetricsRelative 1.0) vs FontSizeRelative(1.5) vs Absolute(40) ==
+  MetricsRelative(1.0): baseline 15 line_height 19 block 0..19 content 0..19
+  FontSizeRelative(1.5): baseline 17 line_height 24 block 0..24 content 2..21
+  Absolute(40.0): baseline 25 line_height 40 block 0..40 content 10..29

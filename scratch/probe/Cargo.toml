@@ -1,0 +1,13 @@
+[package]
+name = "probe"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+parley = { path = "../../../parley/parley", default-features = false, features = ["std"] }
+parley_engine = { path = "../../../parley/parley_engine", default-features = false, features = ["std"] }
+parley_dev = { path = "../../../parley/parley_dev", default-features = false }
+parlance = { path = "../../../parley/parlance" }
+icu_properties = { version = "2.3.0", features = ["compiled_data"] }

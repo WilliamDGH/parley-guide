@@ -1,0 +1,135 @@
+TEXT = "Hi مرحبا office!\nBye"  (25 bytes, 20 chars)
+
+== Analysis ==
+paragraph_level = BidiLevel(0)
+char byte text   scr    bidi grapheme  wrap word
+   0    0 H      Latn      0     true false true
+   1    1 i      Latn      0     true false false
+   2    2 space  Zyyy      0     true false true
+   3    3 م      Arab      1     true  true true
+   4    5 ر      Arab      1     true false false
+   5    7 ح      Arab      1     true false false
+   6    9 ب      Arab      1     true false false
+   7   11 ا      Arab      1     true false false
+   8   13 space  Zyyy      0     true false true
+   9   14 o      Latn      0     true  true true
+  10   15 f      Latn      0     true false false
+  11   16 f      Latn      0     true false false
+  12   17 i      Latn      0     true false false
+  13   18 c      Latn      0     true false false
+  14   19 e      Latn      0     true false false
+  15   20 !      Zyyy      0     true false true
+  16   21 \n     Zyyy      0     true false true
+  17   22 B      Latn      0     true false true
+  18   23 y      Latn      0     true false false
+  19   24 e      Latn      0     true false false
+
+== ShapedText ==
+fonts: 2
+characters: 20  shaped_clusters: 18  glyphs (stored): 2
+run 0: bytes 0..2 chars 0..2 clusters 0..2 glyphs 0..0 font#0 size 24 bidi 0 script Latn ascent 22.27 descent 5.86 leading 0.00
+   cluster 0: chars 0..1 H        advance  17.11 glyph_len 1 inline true grapheme_start true safe_break true ws None style 1  glyphs [44@17.11]
+   cluster 1: chars 1..2 i        advance   5.82 glyph_len 1 inline true grapheme_start true safe_break true ws None style 1  glyphs [77@5.82]
+   atom: chars 0..1 clusters 0..1 H        advance  17.11 wrap_before false safe_break true graphemes [0..1=17.11]
+   atom: chars 1..2 clusters 1..2 i        advance   5.82 wrap_before false safe_break true graphemes [1..2=5.82]
+run 1: bytes 2..3 chars 2..3 clusters 2..3 glyphs 0..0 font#0 size 16 bidi 0 script Latn ascent 14.84 descent 3.91 leading 0.00
+   cluster 2: chars 2..3 space    advance   3.96 glyph_len 1 inline true grapheme_start true safe_break true ws Space style 0  glyphs [4@3.96]
+   atom: chars 2..3 clusters 2..3 space    advance   3.96 wrap_before false safe_break true graphemes [2..3=3.96]
+run 2: bytes 3..13 chars 3..8 clusters 3..8 glyphs 0..2 font#1 size 16 bidi 1 script Arab ascent 20.51 descent 9.84 leading 0.00
+   cluster 3: chars 3..4 م        advance   9.18 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [84@9.18]
+   cluster 4: chars 4..5 ر        advance   5.74 glyph_len 1 inline true grapheme_start true safe_break false ws None style 0  glyphs [30@5.74]
+   cluster 5: chars 5..6 ح        advance   9.28 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [26@9.28]
+   cluster 6: chars 6..7 ب        advance   5.46 glyph_len 2 inline false grapheme_start true safe_break false ws None style 0  glyphs [309@0.00, 15@5.46]
+   cluster 7: chars 7..8 ا        advance   5.06 glyph_len 1 inline true grapheme_start true safe_break false ws None style 0  glyphs [9@5.06]
+   atom: chars 3..4 clusters 3..4 م        advance   9.18 wrap_before true safe_break true graphemes [3..4=9.18]
+   atom: chars 4..5 clusters 4..5 ر        advance   5.74 wrap_before false safe_break false graphemes [4..5=5.74]
+   atom: chars 5..6 clusters 5..6 ح        advance   9.28 wrap_before false safe_break true graphemes [5..6=9.28]
+   atom: chars 6..7 clusters 6..7 ب        advance   5.46 wrap_before false safe_break false graphemes [6..7=5.46]
+   atom: chars 7..8 clusters 7..8 ا        advance   5.06 wrap_before false safe_break false graphemes [7..8=5.06]
+run 3: bytes 13..14 chars 8..9 clusters 8..9 glyphs 2..2 font#1 size 16 bidi 0 script Arab ascent 20.51 descent 9.84 leading 0.00
+   cluster 8: chars 8..9 space    advance   5.44 glyph_len 1 inline true grapheme_start true safe_break true ws Space style 0  glyphs [3@5.44]
+   atom: chars 8..9 clusters 8..9 space    advance   5.44 wrap_before false safe_break true graphemes [8..9=5.44]
+run 4: bytes 14..25 chars 9..20 clusters 9..18 glyphs 2..2 font#0 size 16 bidi 0 script Latn ascent 14.84 descent 3.91 leading 0.00
+   cluster 9: chars 9..10 o        advance   9.12 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [83@9.12]
+   cluster 10: chars 10..13 ffi      advance  13.66 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [446@13.66]
+   cluster 11: chars 13..14 c        advance   8.38 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [71@8.38]
+   cluster 12: chars 14..15 e        advance   8.48 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [73@8.48]
+   cluster 13: chars 15..16 !        advance   4.12 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [5@4.12]
+   cluster 14: chars 16..17 \n       advance   0.00 glyph_len 0 inline false grapheme_start true safe_break true ws Newline style 0  glyphs []
+   cluster 15: chars 17..18 B        advance   9.96 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [38@9.96]
+   cluster 16: chars 18..19 y        advance   7.47 glyph_len 1 inline true grapheme_start true safe_break true ws None style 0  glyphs [93@7.47]
+   cluster 17: chars 19..20 e        advance   8.48 glyph_len 1 inline true grapheme_start true safe_break false ws None style 0  glyphs [73@8.48]
+   atom: chars 9..10 clusters 9..10 o        advance   9.12 wrap_before true safe_break true graphemes [9..10=9.12]
+   atom: chars 10..13 clusters 10..11 ffi      advance  13.66 wrap_before false safe_break true graphemes [10..11=4.55, 11..12=4.55, 12..13=4.55]
+   atom: chars 13..14 clusters 11..12 c        advance   8.38 wrap_before false safe_break true graphemes [13..14=8.38]
+   atom: chars 14..15 clusters 12..13 e        advance   8.48 wrap_before false safe_break true graphemes [14..15=8.48]
+   atom: chars 15..16 clusters 13..14 !        advance   4.12 wrap_before false safe_break true graphemes [15..16=4.12]
+   atom: chars 16..17 clusters 14..15 \n       advance   0.00 wrap_before false safe_break true graphemes [16..17=0.00]
+   atom: chars 17..18 clusters 15..16 B        advance   9.96 wrap_before false safe_break true graphemes [17..18=9.96]
+   atom: chars 18..19 clusters 16..17 y        advance   7.47 wrap_before false safe_break true graphemes [18..19=7.47]
+   atom: chars 19..20 clusters 17..18 e        advance   8.48 wrap_before false safe_break false graphemes [19..20=8.48]
+
+== Layout (max_advance = 80) ==
+styles in table: 2
+content widths: min 43.75 max 109.33
+width 61.61 full_width 65.58 height 70.00 lines 3
+
+line: text 0..14 = "Hi مرحبا " break Regular
+  metrics: baseline 22 line_height 32 block 0..32 content_block 0..32 advance 65.58 hanging 3.96 offset 0 inline 0..80
+  runs in visual order:
+    run 0: text 0..2 = "Hi" rtl false size 24 advance 22.93 clusters 2
+      cluster 0..1 H        advance  17.11 lig_start false lig_cont false word true style 1 glyphs [44]
+      cluster 1..2 i        advance   5.82 lig_start false lig_cont false word false style 1 glyphs [77]
+    run 1: text 2..3 = " " rtl false size 16 advance 3.96 clusters 1
+      cluster 2..3 space    advance   3.96 lig_start false lig_cont false word true style 0 glyphs [4]
+    run 2: text 3..13 = "مرحبا" rtl true size 16 advance 34.72 clusters 5
+      cluster 11..13 ا        advance   5.06 lig_start false lig_cont false word false style 0 glyphs [9]
+      cluster 9..11 ب        advance   5.46 lig_start false lig_cont false word false style 0 glyphs [309,15]
+      cluster 7..9 ح        advance   9.28 lig_start false lig_cont false word false style 0 glyphs [26]
+      cluster 5..7 ر        advance   5.74 lig_start false lig_cont false word false style 0 glyphs [30]
+      cluster 3..5 م        advance   9.18 lig_start false lig_cont false word true style 0 glyphs [84]
+    run 3: text 13..14 = " " rtl false size 16 advance 3.96 clusters 1
+      cluster 13..14 space    advance   3.96 lig_start false lig_cont false word true style 0 glyphs [4]
+  positioned items:
+    glyph run: style 1 offset 0.00 baseline 22.00 advance 22.93 glyphs 44@(0.00,22.00) 77@(17.11,22.00)
+    glyph run: style 0 offset 22.93 baseline 22.00 advance 3.96 glyphs 4@(22.93,22.00)
+    glyph run: style 0 offset 26.89 baseline 22.00 advance 34.72 glyphs 9@(26.89,22.00) 309@(34.61,22.30) 15@(31.95,22.00) 26@(37.41,22.00) 30@(46.69,22.00) 84@(52.43,22.00)
+    glyph run: style 0 offset 61.61 baseline 22.00 advance 3.96 glyphs 4@(61.61,22.00)
+
+line: text 14..22 = "office!\n" break Explicit
+  metrics: baseline 47 line_height 19 block 32..51 content_block 32..51 advance 43.75 hanging 0.00 offset 0 inline 0..80
+  runs in visual order:
+    run 0: text 14..22 = "office!\n" rtl false size 16 advance 43.75 clusters 8
+      cluster 14..15 o        advance   9.12 lig_start false lig_cont false word true style 0 glyphs [83]
+      cluster 15..16 f        advance   4.55 lig_start true lig_cont false word false style 0 glyphs [446]
+      cluster 16..17 f        advance   4.55 lig_start false lig_cont true word false style 0 glyphs []
+      cluster 17..18 i        advance   4.55 lig_start false lig_cont true word false style 0 glyphs []
+      cluster 18..19 c        advance   8.38 lig_start false lig_cont false word false style 0 glyphs [71]
+      cluster 19..20 e        advance   8.48 lig_start false lig_cont false word false style 0 glyphs [73]
+      cluster 20..21 !        advance   4.12 lig_start false lig_cont false word true style 0 glyphs [5]
+      cluster 21..22 \n       advance   0.00 lig_start false lig_cont false word true style 0 glyphs []
+  positioned items:
+    glyph run: style 0 offset 0.00 baseline 47.00 advance 43.75 glyphs 83@(0.00,47.00) 446@(9.12,47.00) 71@(22.78,47.00) 73@(31.16,47.00) 5@(39.63,47.00)
+
+line: text 22..25 = "Bye" break None
+  metrics: baseline 66 line_height 19 block 51..70 content_block 51..70 advance 25.91 hanging 0.00 offset 0 inline 0..80
+  runs in visual order:
+    run 0: text 22..25 = "Bye" rtl false size 16 advance 25.91 clusters 3
+      cluster 22..23 B        advance   9.96 lig_start false lig_cont false word true style 0 glyphs [38]
+      cluster 23..24 y        advance   7.47 lig_start false lig_cont false word false style 0 glyphs [93]
+      cluster 24..25 e        advance   8.48 lig_start false lig_cont false word false style 0 glyphs [73]
+  positioned items:
+    glyph run: style 0 offset 0.00 baseline 66.00 advance 25.91 glyphs 38@(0.00,66.00) 93@(9.96,66.00) 73@(17.43,66.00)
+
+== Cursor / hit test ==
+cursor at byte  0 (downstream): x 0.00 y 0.00..32.00
+cursor at byte  2 (downstream): x 22.93 y 0.00..32.00
+cursor at byte  3 (downstream): x 61.61 y 0.00..32.00
+cursor at byte 13 (downstream): x 61.61 y 0.00..32.00
+cursor at byte 16 (downstream): x 13.68 y 32.00..51.00
+cursor at byte 17 (downstream): x 18.23 y 32.00..51.00
+cursor at byte 20 (downstream): x 39.63 y 32.00..51.00
+point (5, 10) -> cluster 0..1 = "H" side Left
+point (60, 10) -> cluster 3..5 = "م" side Right
+point (100, 10) -> cluster 13..14 = " " side Right
+point (10, 40) -> cluster 15..16 = "f" side Left
