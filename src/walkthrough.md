@@ -46,7 +46,7 @@ The builder also computes `char_style_indices` (`parley/src/builder.rs:482`): on
 
 ## Stage 2: analysis
 
-Analysis is font-independent. `Analyzer::analyze` (`parley_engine/src/analyzer.rs:42`) walks the string once and records, for every character, a `CharInfo` (`parley_engine/src/analysis.rs:322`) with its script and a bag of flags, plus a bidi level when the paragraph is not purely left-to-right. The probe printed:
+Analysis is font-independent. `Analyzer::analyze` (`parley_engine/src/analyzer.rs:42`) records, for every character, a `CharInfo` (`parley_engine/src/analysis.rs:322`) with its script and a bag of flags, plus a bidi level when the text needs bidi resolution (see [Analysis](algorithms.md#analysis)). The probe printed:
 
 ```text
 paragraph_level = BidiLevel(0)
@@ -231,7 +231,7 @@ glyph run: style 0 offset 61.61 baseline 22 advance  3.96 glyphs 4@(61.61,22)
 
 A renderer loops over these, loads the run's font (`run.font()`), and draws each glyph id at `(x, y)`. The Arabic glyphs are already in left-to-right paint order, and the dot of `ب` (glyph 309) sits at 34.61 with a y offset of 0.30, both computed by HarfRust.
 
-Notice the glyph run for `Hi` has style 1 and the rest style 0. A `GlyphRun` never crosses a style boundary, even inside one shaped run, because the renderer needs one brush per run (`GlyphRunIter::next`, `parley/src/layout/line.rs:452`).
+Notice the glyph run for `Hi` has style 1 and the rest style 0. A `GlyphRun` splits when the first-character style changes between atoms, because the renderer needs one brush per run (`GlyphRunIter::next`, `parley/src/layout/line.rs:452`). A style change inside an atom does not split it: a ligature can cross a brush change and is drawn with its first character's style.
 
 ## Stage 9: cursors and hit testing
 

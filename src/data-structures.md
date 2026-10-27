@@ -62,7 +62,7 @@ The field-level details:
 - `ShapedRun` (`parley_engine/src/shape/shaped_text.rs:456`): the `TextRange` (both bytes and chars), `font_size`, `font_index`, the three ranges, the normalized variation coordinates and features it was shaped with, `bidi_level`, `script`, `language`, and a `FontMetrics` (ascent, descent, leading, underline and strikethrough metrics, x-height, cap-height) already scaled to the font size.
 - `Glyph` (`parley_engine/src/glyph.rs:7`): `id`, `x`, `y` offsets and `advance`, in layout units. The y axis points down, which is the opposite of font space; the flip happens at `parley_engine/src/shape/shaped_text.rs:618`.
 
-Glyphs of a right-to-left run are stored in **paint order** (left to right on screen), not logical order (`parley_engine/src/shape/shaped_text.rs:423`). Clusters are always in logical order.
+Glyphs within each cluster of a right-to-left run are stored in **paint order** (`parley_engine/src/shape/shaped_text.rs:423`). The clusters and their glyph groups are stored in logical order; the reading API walks the clusters backwards to produce paint order across the run (`parley/src/layout/run.rs:332`).
 
 ## Shaped cluster, grapheme, atom, `Cluster`
 

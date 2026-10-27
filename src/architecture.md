@@ -103,13 +103,13 @@ Module map, in pipeline order:
 
 **Generic `Brush`.** `Layout<B: Brush>` is generic over the color type so that Parley never depends on a graphics crate (`parley/src/style/brush.rs:5`). `Brush` is a blanket trait: anything `Clone + PartialEq + Default + Debug` qualifies, including `()`.
 
-**Scale and quantize.** `scale` multiplies every length at resolution time (`parley/src/resolve/mod.rs:145`). `quantize` rounds font ascent, descent and leading, baselines, line tops and bottoms and `vertical-align` offsets to whole pixels (`parley/src/layout/style_metrics.rs:228`, `line_break.rs:1619`); glyph advances are never rounded. Both are set once per layout.
+**Scale and quantize.** `scale` multiplies every length at resolution time (`parley/src/resolve/mod.rs:145`). `quantize` rounds font ascent, descent and leading, line tops and bottoms and `vertical-align` offsets to whole pixels (`parley/src/layout/style_metrics.rs:228`, `line_break.rs:1619`); glyph advances are never rounded. Fractional inline box dimensions can still produce fractional baselines (see [invariants](invariants.md#quantize-and-scale)). Both are set once per layout.
 
 **Feature flags.** `std`, `libm`, `system` (platform font backends), `bytemuck`, `complex-scripts` (bake the CJK and South-East-Asian segmentation dictionaries into the binary; otherwise supply them through `DictionaryProvider`). See `parley/Cargo.toml:16`.
 
 **`u16` and `u32` everywhere.** Style indices are `u16` (at most 65 536 styles), character and cluster indices `u32`. Casts from `usize` are marked with `#[expect(clippy::cast_possible_truncation, reason = "Deferred")]`; follow the existing pattern when you add one.
 
-**Lints.** The workspace uses the Linebender lint set (`Cargo.toml:75`): `unsafe_code = "deny"` (fontique is the one exception, for platform FFI), `missing_docs = "warn"`, `unreachable_pub = "warn"`. Unit tests live in `#[cfg(test)] mod tests` at the bottom of the file they test.
+**Lints.** The workspace uses the Linebender lint set (`Cargo.toml:75`): `unsafe_code = "deny"` (fontique is the one exception, for platform FFI and memory-mapped font files), `missing_docs = "warn"`, `unreachable_pub = "warn"`. Unit tests live in `#[cfg(test)] mod tests` at the bottom of the file they test.
 
 ## Where to find X
 

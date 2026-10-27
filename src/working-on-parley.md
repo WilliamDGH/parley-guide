@@ -6,7 +6,7 @@ This chapter is the practical one: how to build, run and test, how snapshot test
 
 - Rust 1.88 or later. CI tests the minimum supported version (MSRV) 1.88 for the published crates and the latest stable, 1.99.1 at the time of writing (`.github/workflows/ci.yml:6`). Bumping the MSRV is not a breaking change (`README.md`).
 - Edition 2024 (`Cargo.toml:28`), so `if let ... && let ...` chains and `use<'a>` capture bounds appear throughout.
-- No `unsafe` outside fontique's platform bindings (`Cargo.toml:76`).
+- No `unsafe` outside fontique, where it is used for platform bindings and memory-mapped font files (`Cargo.toml:76`, `fontique/src/source_cache.rs:252`).
 
 ## Build, run, test
 
@@ -14,7 +14,7 @@ This chapter is the practical one: how to build, run and test, how snapshot test
 cargo build --workspace
 ```
 
-Run the renderers in `examples/` to see output as a PNG. Each writes a file next to the repository root:
+Run the renderers in `examples/` to see output as a PNG. Each writes a file in `examples/_output/` inside the repository:
 
 ```bash
 cargo run -p swash_render

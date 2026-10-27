@@ -46,8 +46,8 @@ flowchart LR
     OV["line_break_override fn"] --> M
     M --> CI["Vec&lt;CharInfo&gt;"]
     CI --> IO["mark_inline_objects<br/>patch U+FFFC"]
-    PR --> BD["BidiResolver (UAX 9)<br/>only if any RTL or explicit RTL"]
-    BD --> LV["Vec&lt;BidiLevel&gt; (empty if pure LTR)"]
+    PR --> BD["BidiResolver (UAX 9)<br/>RTL characters, Arabic numbers,<br/>directional initiators or forced RTL"]
+    BD --> LV["Vec&lt;BidiLevel&gt; (empty when resolution is skipped)"]
 ```
 
 Points worth knowing:
@@ -58,7 +58,7 @@ Points worth knowing:
 - `line-break: anywhere` adds an opportunity before every grapheme (`analysis.rs:862`).
 - The override callback sees three characters (`before_before`, `before`, `after`) and may force or suppress. `CHROMIUM_LINE_BREAK_OVERRIDE` (`parley_engine/src/break_overrides.rs:56`) reproduces Chromium's ASCII punctuation table, and `parley_tests/tests/linebreaking_matches_chrome.rs` checks the first-line break of thousands of generated strings against data recorded in a real Chrome.
 - Word boundaries for scripts that need a dictionary (Chinese, Japanese, Thai, Khmer, Lao, Myanmar) fall back to UAX 29 rule WB999 (every grapheme is a word) when no dictionary is available (`analysis.rs:811`), because ICU4X does not do that itself.
-- Bidi resolution is skipped entirely when no character has a right-to-left class and the base direction is not forced to RTL; `bidi_levels()` is then empty and every character is at the paragraph level (`analysis.rs:946`).
+- Bidi resolution is skipped entirely when there are no right-to-left characters (bidi classes R or AL), Arabic numbers (AN), or embedding, override or isolate initiators, and the base direction is not forced to RTL; `bidi_levels()` is then empty and every character is at the paragraph level (`analysis.rs:946`, `bidi.rs:716`).
 
 ## Bidi reordering
 
@@ -66,7 +66,7 @@ Points worth knowing:
 
 UAX 9 assigns each character an embedding level. The engine computes levels in `BidiResolver::resolve` (`parley_engine/src/bidi.rs:52`) and itemization makes sure every shaped run has one level. Reordering happens twice, at two granularities:
 
-1. **Within a run**, HarfRust returns RTL glyphs in visual order already, and `push_run` stores them in paint order (`parley_engine/src/shape/shaped_text.rs:412`). Clusters stay in logical order; `Run::visual_clusters()` simply walks them backwards for an RTL run.
+1. **Within a run**, HarfRust returns RTL glyphs in visual order already, but `push_run` stores their clusters in logical order, with paint order preserved only within each cluster (`parley_engine/src/shape/shaped_text.rs:412`). `Run::visual_clusters()` walks clusters backwards for an RTL run, and the glyph iterator does the same to produce paint order across the run (`parley/src/layout/run.rs:332`).
 2. **Across runs on a line**, `reorder_line_items` (`parley/src/layout/line_break.rs:1983`) implements UAX 9 rule L2: from the highest level down to the lowest odd level, reverse every maximal sequence of items at or above that level.
 
 Worked example from the walkthrough, line 1 at width 80:
@@ -112,7 +112,7 @@ Within a family, fontique's `match_fonts` (`fontique/src/matching.rs:12`) runs t
 `shape_run` (the closure at `parley_engine/src/shape/shaper.rs:287`) does:
 
 1. Look up or create three cached HarfRust objects: `ShaperData` per font, `ShaperInstance` per font and variation setting, `ShapePlan` per font, direction, script, language, features and coordinates (`shaper.rs:293`). The caches are 16-entry LRUs.
-2. Fill a `UnicodeBuffer` one `char` at a time with the character's index within the run as its cluster value (`shaper.rs:351`), so that HarfRust's output cluster values map straight back to `Character` rows. The text before and after the run is given as context so that joining and kerning across run boundaries are right (`shaper.rs:362`, from `#740`).
+2. Fill a `UnicodeBuffer` one `char` at a time with the character's index within the run as its cluster value (`shaper.rs:351`), so that HarfRust's output cluster values map straight back to `Character` rows. The text before and after the run is given as context so that joining across run boundaries is right (`shaper.rs:362`, from `#740`). This does not preserve kerning between glyphs in separate runs.
 3. Shape with `MonotoneCharacters` cluster level, which lets a grapheme be split into several clusters when the font does not combine base and mark.
 4. `push_run` (`shaped_text.rs:308`) copies the characters, computes `FontMetrics` with skrifa, and `process_shaped_clusters` (`shaped_text.rs:505`) groups glyphs by HarfRust cluster value into `ShapedCluster`s.
 
@@ -280,7 +280,7 @@ Measured: `"aa bb cc dd ee"` at width 60 breaks as `aa bb ` plus `cc dd ee`.
 | alignment | line 1 offset | line 1 space advances | line 2 offset |
 |---|---|---|---|
 | `Start` | 0 | 3.96, 3.96 (hanging) | 0 |
-| `Justify` | 0 | **24.64**, 3.96 (hanging) | 0.33 (last line is start-aligned, offset is the leftover rounding) |
+| `Justify` | 0 | **24.64**, 3.96 (hanging) | 0 (last line is start-aligned) |
 | `End` | 20.68 | 3.96, 3.96 | 0.33 |
 
 Free space on line 1 is 60 - 43.28 + 3.96 = 20.68. There is one justification opportunity (the interior space; the trailing one hangs), so it grows to 3.96 + 20.68 = 24.64 and the run's advance becomes 63.96, which is 60 plus the hanging 3.96. The stretch is applied when the space's atom is read: `EffectiveSpacing::gaps` adds `amount_per_opportunity` to word separators before `justification_end_cluster` (`spacing.rs:191`).

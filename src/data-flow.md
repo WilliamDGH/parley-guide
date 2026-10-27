@@ -178,7 +178,7 @@ flowchart TD
     A -- "run.shaped_clusters_range" --> R["shaped run 4<br/>RunData 4"]
     R -- "LineItemData.shaped_cluster_range 9..15" --> L["line 1, line item 0"]
     L -- "GlyphRunIter" --> G["GlyphRun offset 0.00 baseline 47<br/>glyph 83 at (0.00, 47)"]
-    G -. "Cluster::from_point(10, 40)" .-> K
+    G -. "Cluster::from_point(5, 40)" .-> K
     K -. "Character.text_byte_start" .-> B
 ```
 

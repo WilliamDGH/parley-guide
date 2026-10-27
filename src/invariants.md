@@ -10,7 +10,7 @@ The glyph advances in `ShapedText` are what HarfRust produced and nothing else. 
 - `Run::advance`, `Cluster::advance` and the glyph iterators use `Run::line_spacing()` (`run.rs:129`), which includes the line's justification when the run is scoped to a line;
 - `ContentWidthsMeasurer` adds the gaps itself, atom by atom (`data.rs:612`).
 
-**Why**: before `#738` (August 2026) justification mutated advances in place, so aligning twice, or breaking after aligning, gave wrong widths. Keeping shaping output immutable makes `break_all_lines` and `align` safe to call in any order and any number of times, and lets one `ShapedText` be shared by every line.
+**Why**: before `#738` (August 2026) justification mutated advances in place, so aligning twice, or breaking after aligning, gave wrong widths. Keeping shaping output immutable makes repeated calls to `break_all_lines` and `align` safe, and lets one `ShapedText` be shared by every line. Order still matters: line breaking resets offsets and justification, so call `align` after the latest `break_all_lines` (`layout/layout.rs:233`).
 
 **How to apply**: never write to `ShapedCluster::advance` or `Glyph::advance` outside `parley_engine`. The one exception is `set_inline_object_advance` (`shaped_text.rs:234`), which fills in the width of an inline object whose cluster was shaped with advance 0. If you need a new kind of extra space, add it to `Gaps` and `EffectiveSpacing`.
 
@@ -32,8 +32,8 @@ A `Run` view carries `Option<&LineItemData>` to say which world it is in (`run.r
 
 - The style table is `Vec<Style>` on the layout and `Vec<ResolvedStyle>` during build. Index 0 is the root style, and the root is its own parent (`layout/mod.rs:51`).
 - The table is parent-first: `styles[i].parent < i` for `i > 0`, guaranteed by both builders (`resolve/range.rs:148`, `resolve/tree.rs:215`) and relied on by `resolve_style_metrics` (`style_metrics.rs:103`).
-- A character's style is `Character::style_index`. A shaped cluster's style is that of its logically first character (`shaped_text.rs:559`). A `Cluster`'s (grapheme's) style is that of its first character too (`cluster.rs:177`). A `GlyphRun` has one style and ends where the style changes (`line.rs:482`).
-- A ligature can cross a style boundary ("ffi" with the second `f` bold). Then the atom has mixed styles: `RunData::has_mixed_style_atoms` (`data.rs:44`) is set and the line box collects the span boxes of every style in the atom (`line_break.rs:448`). The glyphs are drawn with the first character's style.
+- A character's style is `Character::style_index`. A shaped cluster's style is that of its logically first character (`shaped_text.rs:559`). A `Cluster`'s (grapheme's) style is that of its first character too (`cluster.rs:177`). A `GlyphRun` has one style and ends where the first-character style changes between atoms (`line.rs:482`).
+- A ligature can cross a style boundary ("ffi" with a different brush on the second `f`). Then the atom has mixed styles: `RunData::has_mixed_style_atoms` (`data.rs:44`) is set and the line box collects the span boxes of every style in the atom (`line_break.rs:448`). The glyphs are drawn with the first character's style. A font or synthesis change splits the shaping run; making the second `f` bold in the guide's Roboto setup prevents the `ffi` ligature.
 - Style indices are `u16`. Both builders `assert!` when the table would exceed `u16::MAX` entries.
 
 ## Atom alignment
@@ -48,22 +48,22 @@ Consequence: a line always begins and ends on a grapheme boundary, so a caret ca
 
 ## Analysis and shaping see the same text
 
-`Analyzer::analyze` and `Shaper::shape_text` must be given the identical `&str`; the engine panics with "The passed in `text` was not of the same length" otherwise (`itemize.rs:207`). The `Item`s passed to `shape_text` must tile the character count exactly (`shaper.rs:176`, `shaper.rs:223`). `char_style_indices` must have one entry per character (`shaper.rs:166`).
+`Analyzer::analyze` and `Shaper::shape_text` must be given the identical `&str`. The engine does not compare their contents: different text with the same character count can pass without a panic. The panic at `itemize.rs:207` catches the text iterator ending before the analysis data does. The `Item`s passed to `shape_text` must tile the character count exactly (`shaper.rs:176`, `shaper.rs:223`). `char_style_indices` must have one entry per character (`shaper.rs:166`).
 
 Empty text is special-cased: the builder substitutes a single space so that the layout has metrics to size a caret (`parley/src/analysis.rs:16`, `parley/src/shape/mod.rs:58`), then `BreakLines::finish` resets the first line's text range to `0..0` (`line_break.rs:1468`).
 
 ## `ShapedText` covers the text, unless fonts are missing
 
-Normally `ShapedText::characters().len()` equals the character count, and every character is in exactly one run (`shaper.rs:227`). If the `FontSelector` returns `None`, shaping stops and the result covers a prefix of the text (`shaper.rs:203`). `parley` avoids this by falling back to any generic-family font (`any_font`), so in practice a `Layout` is only partial when the `FontContext` has no fonts at all. Code that walks runs should not assume it reached the end of the text.
+Normally `ShapedText::characters().len()` equals the character count, and every character is in exactly one run (`shaper.rs:227`). If the `FontSelector` returns `None`, shaping stops and the result covers a prefix of the text (`shaper.rs:203`). `parley` tries to avoid this by falling back through the sans-serif, serif and monospace generic families (`any_font`, `parley/src/shape/mod.rs:447`). This does not scan every registered font: if neither the requested families nor the fallback mappings yield a font, a `Layout` can be partial even when the `FontContext` contains fonts. Code that walks runs should not assume it reached the end of the text.
 
 ## Quantize and scale
 
 - `scale` is applied once, at style resolution, to every length: font size, spacing, decoration offsets, absolute line heights, `vertical-align` lengths (`resolve/mod.rs:136`). Inline box sizes are not scaled; callers pass them in layout units.
-- `quantize` rounds the font's ascent, descent and leading before summing them for `line-height: normal` (`style/mod.rs:96`), rounds span box extents and baseline offsets (`style_metrics.rs:165`, `:228`), rounds line tops and bottoms (`line_break.rs:1619`), and rounds inline box heights for `top`/`bottom` boxes. It never rounds glyph advances or x positions. The result is that baselines are integers and lines stack without gaps, while horizontal metrics stay exact. Renderers still need to round x before rasterising, as the `ranged_builder` docs say (`context.rs:87`).
+- `quantize` rounds the font's ascent, descent and leading before summing them for `line-height: normal` (`style/mod.rs:96`), rounds span ascents and descents, floors the half-leading above the baseline, and rounds baseline offsets (`style_metrics.rs:165`, `:228`). It also rounds line tops and bottoms (`line_break.rs:1619`) and inline box heights for `top`/`bottom` boxes. It never rounds glyph advances or x positions. Fractional inline box dimensions can leave fractional baselines, and fractional line heights can make rounded line boxes overlap or leave gaps (`line_break.rs:1626`). The `ranged_builder` docs list vertical coordinates to round before painting (`context.rs:87`); x positions can stay fractional, as in the Swash renderer (`examples/swash_render/src/main.rs:324`).
 
 ## Bidi facts to remember
 
-- `bidi_levels()` is empty for a pure left-to-right paragraph; `Itemizer` treats that as "every character at the paragraph level" (`itemize.rs:171`).
+- `bidi_levels()` is empty when bidi resolution is skipped; `Itemizer` treats that as "every character at the paragraph level" (`itemize.rs:171`). Left-to-right text can still need resolution if it contains embedding, override or isolate initiators, or Arabic numbers (`bidi.rs:716`).
 - Levels are per character; runs never span a level change.
 - Items on a line are reordered at commit time, so `line_items` are visual and `items` are logical.
 - Trailing whitespace hangs only when its run has the paragraph level, because UAX 9 L1 is not implemented (`line_break.rs:1908`, `data.rs:516`). Marked as a known limitation in the code.
@@ -82,7 +82,7 @@ The `Whitespace` enum (`parley_engine/src/shape/cluster.rs:81`) classifies every
 | `Newline` | U+000A, U+000D, U+2028, U+2029 | yes (zero advance) | no | LF and CR yes, LS and PS no |
 | `ControlWhitespace` | U+000B, U+000C, U+0085 | no | no | FF yes (ASCII whitespace); VT and NEL no |
 
-"Collapsible" is `WhiteSpaceCollapse::is_collapsible` (`whitespace.rs:39`): ASCII whitespace under `Collapse`, only space and tab under `PreserveBreaks`. CSS Text 4 treats U+3000 like other space separators, but Parley hangs it on purpose because applications asked for it (`#784`).
+"Collapsible" is `WhiteSpaceCollapse::is_collapsible` (`whitespace.rs:39`): ASCII whitespace under `Collapse`, only space and tab under `PreserveBreaks`. CSS Text 4's hanging rules include U+3000 and other space separators. Parley hangs U+3000 (`#784`), but leaves the `OtherSpaceSeparator` class out (`whitespace.rs:56`).
 
 ## Where CSS semantics live
 
@@ -122,7 +122,7 @@ Layout-level options that are not styles:
 
 Where Parley knowingly deviates from CSS or the Unicode algorithms, the code says so in a comment. The ones found while writing this guide:
 
-- Hanging U+3000 (CSS does not single it out) (`whitespace.rs:56`).
+- Not hanging the `OtherSpaceSeparator` class, although CSS includes those characters in its hanging rules (`whitespace.rs:56`).
 - Letter spacing between cursive letters is applied although CSS Text 4 section 8.2.1 says not to (`data.rs:30`).
 - Only space and no-break space are word separators; CSS also lists the Ethiopic word space and others (`spacing.rs:14`).
 - `break-spaces` overrides UAX 14 LB7 (`analyzer.rs:93`).

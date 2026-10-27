@@ -33,7 +33,7 @@ for line in layout.lines() {
 }
 ```
 
-The two arguments `1.0, true` are the display scale (for HiDPI, like `devicePixelRatio`) and `quantize` (round baselines and line boxes to whole pixels). Every number this guide prints was produced with scale 1 and quantize on, which is what the examples and tests use.
+The two arguments `1.0, true` are the display scale (for HiDPI, like `devicePixelRatio`) and `quantize` (round vertical font metrics and line box edges to whole pixels; see [the limits](invariants.md#quantize-and-scale)). Every number this guide prints was produced with scale 1 and quantize on, which is what the examples and tests use.
 
 ## What Parley is not
 
@@ -79,10 +79,10 @@ graph BT
     parley --> parley_engine
     parley --> fontique
     parley --> parlance
-    harfrust([harfrust]) -.-> parley_engine
-    skrifa([skrifa]) -.-> parley_engine
-    icu([icu4x: segmenter, properties, normalizer]) -.-> parley_engine
-    readfonts([read-fonts]) -.-> fontique
+    parley_engine -.-> harfrust([harfrust])
+    parley_engine -.-> skrifa([skrifa])
+    parley_engine -.-> icu([icu4x: segmenter, properties, normalizer])
+    fontique -.-> readfonts([read-fonts])
 ```
 
 Dashed arrows are the important external crates. The main remaining workspace members are tooling, not published (two more, `parley_tests/linebreaking_cases` and `parley_tests/linebreaking_browser_recorder`, generate and record the Chrome line-break comparison data; see `Cargo.toml:15`):
